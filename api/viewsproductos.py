@@ -1,11 +1,11 @@
 from django.views import View
-from .models import Users
+from .modelsprodcutos import Producto
 from django.http.response import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 import json
 
-class VistaUsers(View):
+class VistaProductos(View):
     
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -13,14 +13,14 @@ class VistaUsers(View):
     
     def get(self, request, id=0):
         if(id>0):
-            usuarios = list (Users.objects.filter(id=id).values())
+            usuarios = list (Producto.objects.filter(id=id).values())
             if(len(usuarios) > 0):
                 datos = {'message' : 'Successfully', 'usuarios' : usuarios}
             else:
                 datos = {'message' : 'Usuarios no existentes'}
             return JsonResponse(datos)    
         else:
-            usuarios = list (Users.objects.values())                 
+            usuarios = list (Producto.objects.values())                 
             if len(usuarios) > 0 : 
                 datos = {'message' : 'Successfully', 'usuarios' : usuarios}
             else: 
@@ -28,7 +28,7 @@ class VistaUsers(View):
             return JsonResponse(datos) 
     def post(self, request):
             jd = json.loads(request.body)
-            Users.objects.create(
+            Producto.objects.create(
               name = jd['name'],
               email = jd['email'],
               password = jd['password'],
@@ -42,6 +42,6 @@ class VistaUsers(View):
             return JsonResponse(datos) 
     def delete(self, id):
             jd = json.loads(id)
-            Users.objects.delete(jd)
+            Producto.objects.delete(jd)
             datos = {'message' : 'Successfully'}
             return JsonResponse(datos) 

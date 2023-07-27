@@ -6,4 +6,3 @@ class Users(models.Model):
     password = models.CharField(max_length=150)
     telefono = models.IntegerField()
     observaciones = models.TextField()
-    
