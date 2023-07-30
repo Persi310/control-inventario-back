@@ -1,5 +1,5 @@
 from django.views import View
-from .modelscategorias import Categoria
+from .models import Categoria
 from django.http.response import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -13,27 +13,23 @@ class VistaCategorias(View):
     
     def get(self, request, id=0):
         if(id>0):
-            usuarios = list (Categoria.objects.filter(id=id).values())
-            if(len(usuarios) > 0):
-                datos = {'message' : 'Successfully', 'usuarios' : usuarios}
+            categorias = list (Categoria.objects.filter(id=id).values())
+            if(len(categorias) > 0):
+                datos = {'message' : 'Successfully', 'categorias' : categorias}
             else:
-                datos = {'message' : 'Usuarios no existentes'}
+                datos = {'message' : 'Categorias no existentes'}
             return JsonResponse(datos)    
         else:
-            usuarios = list (Categoria.objects.values())                 
-            if len(usuarios) > 0 : 
-                datos = {'message' : 'Successfully', 'usuarios' : usuarios}
+            categorias = list (Categoria.objects.values())                 
+            if len(categorias) > 0 : 
+                datos = {'message' : 'Successfully', 'categorias' : categorias}
             else: 
-                datos = {'message' : 'Usuarios no existentes'}
+                datos = {'message' : 'Categorias no existentes'}
             return JsonResponse(datos) 
     def post(self, request):
             jd = json.loads(request.body)
             Categoria.objects.create(
-              name = jd['name'],
-              email = jd['email'],
-              password = jd['password'],
-              telefono = jd['telefono'],
-              observaciones = jd['observaciones'],
+              categoria = jd['categoria'],
             )
             datos = {'message' : 'Successfully'}
             return JsonResponse(datos) 

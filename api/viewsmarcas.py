@@ -1,5 +1,5 @@
 from django.views import View
-from .modelsmarcas import Marca
+from .models import Marca
 from django.http.response import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -13,27 +13,23 @@ class VistaMarcas(View):
     
     def get(self, request, id=0):
         if(id>0):
-            usuarios = list (Marca.objects.filter(id=id).values())
-            if(len(usuarios) > 0):
-                datos = {'message' : 'Successfully', 'usuarios' : usuarios}
+            marcas = list (Marca.objects.filter(id=id).values())
+            if(len(marcas) > 0):
+                datos = {'message' : 'Successfully', 'marcas' : marcas}
             else:
-                datos = {'message' : 'Usuarios no existentes'}
+                datos = {'message' : 'Marcas no existentes'}
             return JsonResponse(datos)    
         else:
-            usuarios = list (Marca.objects.values())                 
-            if len(usuarios) > 0 : 
-                datos = {'message' : 'Successfully', 'usuarios' : usuarios}
+            marcas = list (Marca.objects.values())                 
+            if len(marcas) > 0 : 
+                datos = {'message' : 'Successfully', 'marcas' : marcas}
             else: 
-                datos = {'message' : 'Usuarios no existentes'}
+                datos = {'message' : 'Marcas no existentes'}
             return JsonResponse(datos) 
     def post(self, request):
             jd = json.loads(request.body)
             Marca.objects.create(
-              name = jd['name'],
-              email = jd['email'],
-              password = jd['password'],
-              telefono = jd['telefono'],
-              observaciones = jd['observaciones'],
+              marca = jd['marca'],
             )
             datos = {'message' : 'Successfully'}
             return JsonResponse(datos) 

@@ -1,11 +1,11 @@
 from django.views import View
-from .models import Producto
+from .models import Rol
 from django.http.response import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 import json
 
-class VistaProductos(View):
+class VistaRol(View):
     
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -13,27 +13,23 @@ class VistaProductos(View):
     
     def get(self, request, id=0):
         if(id>0):
-            usuarios = list (Producto.objects.filter(id=id).values())
-            if(len(usuarios) > 0):
-                datos = {'message' : 'Successfully', 'usuarios' : usuarios}
+            roles = list (Rol.objects.filter(id=id).values())
+            if(len(roles) > 0):
+                datos = {'message' : 'Successfully', 'roles' : roles}
             else:
-                datos = {'message' : 'Usuarios no existentes'}
+                datos = {'message' : 'Roles no existentes'}
             return JsonResponse(datos)    
         else:
-            usuarios = list (Producto.objects.values())                 
-            if len(usuarios) > 0 : 
-                datos = {'message' : 'Successfully', 'usuarios' : usuarios}
+            roles = list (Rol.objects.values())                 
+            if len(roles) > 0 : 
+                datos = {'message' : 'Successfully', 'roles' : roles}
             else: 
-                datos = {'message' : 'Usuarios no existentes'}
+                datos = {'message' : 'Roles no existentes'}
             return JsonResponse(datos) 
     def post(self, request):
             jd = json.loads(request.body)
-            Producto.objects.create(
-              name = jd['name'],
-              email = jd['email'],
-              password = jd['password'],
-              telefono = jd['telefono'],
-              observaciones = jd['observaciones'],
+            Rol.objects.create(
+              rol = jd['rol'],
             )
             datos = {'message' : 'Successfully'}
             return JsonResponse(datos) 
@@ -42,6 +38,6 @@ class VistaProductos(View):
             return JsonResponse(datos) 
     def delete(self, id):
             jd = json.loads(id)
-            Producto.objects.delete(jd)
+            Rol.objects.delete(jd)
             datos = {'message' : 'Successfully'}
             return JsonResponse(datos) 

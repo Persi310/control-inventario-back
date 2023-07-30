@@ -1,5 +1,5 @@
 from django.views import View
-from .modelsusers import Users
+from .models import Users
 from django.http.response import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -29,11 +29,17 @@ class VistaUsers(View):
     def post(self, request):
             jd = json.loads(request.body)
             Users.objects.create(
-              name = jd['name'],
-              email = jd['email'],
+              nombre_usuario = jd['nombre_usuario'],
+              correo_electronico = jd['correo_electronico'],
               password = jd['password'],
+              primer_nombre = jd['primer_nombre'],
+              segundo_nombre = jd['segundo_nombre'],
+              primer_apellido = jd['primer_apellido'],
+              segundo_apellido = jd['segundo_apellido'],
+              direccion = jd['direccion'],
               telefono = jd['telefono'],
-              observaciones = jd['observaciones'],
+              nombre_empresa = jd['nombre_empresa'],
+              rol_id = jd['rol_id'],
             )
             datos = {'message' : 'Successfully'}
             return JsonResponse(datos) 

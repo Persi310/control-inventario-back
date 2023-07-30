@@ -3,6 +3,7 @@ from .viewsusers import VistaUsers
 from .viewscategorias import VistaCategorias
 from .viewsmarcas import VistaMarcas
 from .viewsproductos import VistaProductos
+from .viewsrol import VistaRol
 
 urlpatterns = [
 
@@ -21,4 +22,8 @@ urlpatterns = [
     #RUTAS PRODCUTOS
     path('productos', VistaProductos.as_view(), name='lista_productos'),
     path('productos/<int:id>', VistaProductos.as_view(), name='procesos_prodcutos'),
+
+    #RUTAS ROLES
+    path('rol', VistaRol.as_view(), name='lista_roles'),
+    path('rol/<int:id>', VistaRol.as_view(), name='procesos_roles'),
 ]
