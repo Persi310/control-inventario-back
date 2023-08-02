@@ -1,11 +1,11 @@
 from django.views import View
-from .models import Producto
+from .models import Inventario
 from django.http.response import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 import json
 
-class VistaProductos(View):
+class VistaInventario(View):
     
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -13,29 +13,26 @@ class VistaProductos(View):
     
     def get(self, request, id=0):
         if(id>0):
-            usuarios = list (Producto.objects.filter(id=id).values())
-            if(len(usuarios) > 0):
-                datos = {'message' : 'Successfully', 'usuarios' : usuarios}
+            marcas = list (Inventario.objects.filter(id=id).values())
+            if(len(marcas) > 0):
+                datos = {'message' : 'Successfully', 'marcas' : marcas}
             else:
-                datos = {'message' : 'Usuarios no existentes'}
+                datos = {'message' : 'Inventario sin stock'}
             return JsonResponse(datos)    
         else:
-            usuarios = list (Producto.objects.values())                 
-            if len(usuarios) > 0 : 
-                datos = {'message' : 'Successfully', 'usuarios' : usuarios}
+            marcas = list (Inventario.objects.values())                 
+            if len(marcas) > 0 : 
+                datos = {'message' : 'Successfully', 'marcas' : marcas}
             else: 
-                datos = {'message' : 'Usuarios no existentes'}
+                datos = {'message' : 'Inventario sin stock'}
             return JsonResponse(datos) 
     def post(self, request):
             jd = json.loads(request.body)
-            Producto.objects.create(
-              nombre = jd['nombre'],
-              descripcion = jd['descripcion'],
-              precio = jd['precio'],
-              cantidad_minima = jd['cantidad_minima'],
-              categoria_id = jd['categoria_id'],
-              marca_id = jd['marca_id'],
-              proveedor_id = jd['proveedor_id'],
+            Inventario.objects.create(
+              cantidad_stock = jd['cantidad_stock'],
+              fecha_ultima_actualizacion = jd['fecha_ultima_actualizacion'],
+              producto_id = jd['producto_id'],
+              tienda_id = jd['tienda_id'],
             )
             datos = {'message' : 'Successfully'}
             return JsonResponse(datos) 
@@ -44,6 +41,6 @@ class VistaProductos(View):
             return JsonResponse(datos) 
     def delete(self, id):
             jd = json.loads(id)
-            Producto.objects.delete(jd)
+            Inventario.objects.delete(jd)
             datos = {'message' : 'Successfully'}
             return JsonResponse(datos) 

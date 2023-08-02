@@ -1,0 +1,45 @@
+from django.views import View
+from .models import Compra
+from django.http.response import JsonResponse
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+class VistaCompras(View):
+    
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+    
+    def get(self, id=0):
+        if(id>0):
+            compras = list (Compra.objects.filter(id=id).values())
+            if(len(compras) > 0):
+                datos = {'message' : 'Successfully', 'compras' : compras}
+            else:
+                datos = {'message' : 'Compras no existentes'}
+            return JsonResponse(datos)    
+        else:
+            compras = list (Compra.objects.values())                 
+            if len(compras) > 0 : 
+                datos = {'message' : 'Successfully', 'categorias' : compras}
+            else: 
+                datos = {'message' : 'Compras no existentes'}
+            return JsonResponse(datos) 
+    def post(self, request):
+            jd = json.loads(request.body)
+            Compra.objects.create(
+              fecha = jd['fecha'],
+              total = jd['total'],
+              usuario_id = jd['usuario_id'],
+            )
+            datos = {'message' : 'Successfully'}
+            return JsonResponse(datos) 
+    def put(self, id):
+            datos = {'message' : 'Successfully'}
+            return JsonResponse(datos) 
+    def delete(self, id):
+            jd = json.loads(id)
+            Compra.objects.delete(jd)
+            datos = {'message' : 'Successfully'}
+            return JsonResponse(datos) 
