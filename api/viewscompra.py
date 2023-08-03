@@ -1,5 +1,5 @@
 from django.views import View
-from .models import Compra
+from .models import Compra, DetalleCompras
 from django.http.response import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -27,14 +27,30 @@ class VistaCompras(View):
                 datos = {'message' : 'Compras no existentes'}
             return JsonResponse(datos) 
     def post(self, request):
-            jd = json.loads(request.body)
-            Compra.objects.create(
-              fecha = jd['fecha'],
-              total = jd['total'],
-              usuario_id = jd['usuario_id'],
+        jd = json.loads(request.body)
+        total = 0
+        compra = Compra.objects.create(
+            fecha=jd['fecha'],
+            total=0,
+            usuario_id=jd['usuario_id'],
+        )
+        productos = jd.get('productos', [])
+        for producto in productos:
+            subtotal = producto['cantidad'] * producto['precio_unitario']
+            DetalleCompras.objects.create(
+                compra=compra,
+                producto_id=producto['producto_id'],
+                cantidad=producto['cantidad'],
+                subtotal=subtotal,
+                precio_unitario=producto['precio_unitario'],
             )
-            datos = {'message' : 'Successfully'}
-            return JsonResponse(datos) 
+            total += subtotal
+
+        compra.total = total
+        compra.save()
+
+        datos = {'message': 'Successfully'}
+        return JsonResponse(datos) 
     def put(self, id):
             datos = {'message' : 'Successfully'}
             return JsonResponse(datos) 
