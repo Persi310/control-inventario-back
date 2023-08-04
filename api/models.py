@@ -1,20 +1,19 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 class Rol(models.Model):
     rol = models.CharField(max_length=150)
 
-class Users(models.Model):
-    nombre_usuario = models.CharField(max_length=150)
-    correo_electronico = models.EmailField()
+class Users(AbstractUser):
+    email = models.EmailField(unique=True)
     password = models.CharField(max_length=150)
-    primer_nombre = models.CharField(max_length=150)
-    segundo_nombre = models.CharField(max_length=150)
-    primer_apellido = models.CharField(max_length=150)
-    segundo_apellido = models.CharField(max_length=150)
-    direccion = models.TextField()
-    telefono = models.IntegerField()
-    nombre_empresa = models.CharField(max_length=150)
+    direccion = models.TextField(null=True)
+    telefono = models.IntegerField(null=True)
+    nombre_empresa = models.CharField(max_length=150, null=True)
     rol = models.ForeignKey(Rol , on_delete=models.CASCADE)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
 
 class Categoria(models.Model):
     categoria = models.CharField(max_length=150)  

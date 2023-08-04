@@ -8,9 +8,14 @@ from .viewscompra import VistaCompras
 from .viewsinventario import VistaInventario
 from .viewstiendas import VistaTiendas
 from .viewsventas import VistaVentas
+from .viewsregistro import VistaRegistro
 
 
 urlpatterns = [
+
+    #RUTAS USERS
+    path('registro', VistaRegistro.as_view(), name='registro'),
+    path('login', VistaUsers.as_view(), name='login'),
 
     #RUTAS USERS
     path('users', VistaUsers.as_view(), name='lista_usuarios'),
