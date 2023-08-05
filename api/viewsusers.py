@@ -12,6 +12,13 @@ class VistaUsers(View):
         return super().dispatch(request, *args, **kwargs)
     
     def get(self, request, id=0):
+        token = request.COOKIES.get('jwt')
+
+        if not token:
+             return JsonResponse({
+                  "message" : "Usuario Inautenticado"
+             })
+        
         if(id>0):
             usuarios = list (Users.objects.filter(id=id).values())
             if(len(usuarios) > 0):

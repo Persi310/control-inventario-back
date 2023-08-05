@@ -12,6 +12,14 @@ class VistaMarcas(View):
         return super().dispatch(request, *args, **kwargs)
     
     def get(self, request, id=0):
+
+        token = request.COOKIES.get('jwt')
+
+        if not token:
+             return JsonResponse({
+                  "message" : "Usuario Inautenticado"
+             })
+
         if(id>0):
             marcas = list (Marca.objects.filter(id=id).values())
             if(len(marcas) > 0):

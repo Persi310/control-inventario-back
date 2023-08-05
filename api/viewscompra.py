@@ -11,7 +11,15 @@ class VistaCompras(View):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
     
-    def get(self, id=0):
+    def get(self, request, id=0):
+
+        token = request.COOKIES.get('jwt')
+
+        if not token:
+             return JsonResponse({
+                  "message" : "Usuario Inautenticado"
+             })
+
         if(id>0):
             compras = list (Compra.objects.filter(id=id).values())
             if(len(compras) > 0):

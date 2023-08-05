@@ -9,13 +9,15 @@ from .viewsinventario import VistaInventario
 from .viewstiendas import VistaTiendas
 from .viewsventas import VistaVentas
 from .viewsregistro import VistaRegistro
+from .viewslogin import VistaLogin, VistaLogout
 
 
 urlpatterns = [
 
     #RUTAS USERS
     path('registro', VistaRegistro.as_view(), name='registro'),
-    path('login', VistaUsers.as_view(), name='login'),
+    path('login', VistaLogin.as_view(), name='login'),
+    path('logout', VistaLogout.as_view(), name='logout'),
 
     #RUTAS USERS
     path('users', VistaUsers.as_view(), name='lista_usuarios'),
