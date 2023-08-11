@@ -35,12 +35,19 @@ class VistaMarcas(View):
                 datos = {'message' : 'Marcas no existentes'}
             return JsonResponse(datos) 
     def post(self, request):
-            jd = json.loads(request.body)
-            Marca.objects.create(
+        token = request.COOKIES.get('jwt')
+
+        if not token:
+             return JsonResponse({
+                  "message" : "Usuario Inautenticado"
+             })
+             
+        jd = json.loads(request.body)
+        Marca.objects.create(
               marca = jd['marca'],
             )
-            datos = {'message' : 'Successfully'}
-            return JsonResponse(datos) 
+        datos = {'message' : 'Successfully'}
+        return JsonResponse(datos) 
     def put(self, id):
             datos = {'message' : 'Successfully'}
             return JsonResponse(datos) 

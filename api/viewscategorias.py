@@ -35,17 +35,53 @@ class VistaCategorias(View):
                 datos = {'message' : 'Categorias no existentes'}
             return JsonResponse(datos) 
     def post(self, request):
-            jd = json.loads(request.body)
-            Categoria.objects.create(
+        
+        token = request.COOKIES.get('jwt')
+
+        if not token:
+             return JsonResponse({
+                  "message" : "Usuario Inautenticado"
+             })
+               
+        jd = json.loads(request.body)
+            
+        Categoria.objects.create(
               categoria = jd['categoria'],
             )
-            datos = {'message' : 'Successfully'}
-            return JsonResponse(datos) 
-    def put(self, id):
-            datos = {'message' : 'Successfully'}
-            return JsonResponse(datos) 
-    def delete(self, id):
-            jd = json.loads(id)
-            Categoria.objects.delete(jd)
-            datos = {'message' : 'Successfully'}
-            return JsonResponse(datos) 
+        datos = {'message' : 'Successfully'}
+        return JsonResponse(datos) 
+    def put(self, request,  id):
+        
+        token = request.COOKIES.get('jwt')
+
+        if not token:
+             return JsonResponse({
+                  "message" : "Usuario Inautenticado"
+             })
+        
+        jd = json.loads(request.body)
+        categorias = list (Categoria.objects.filter(id=id).values())
+        if(len(categorias) > 0):
+                categoria=Categoria.objects.get(id=id)
+                categoria.categoria = jd['categoria']
+                categoria.save()
+                datos = {'message' : 'Successfully'}
+        else:
+                datos = {'message' : 'Categorias no existentes'}     
+        return JsonResponse(datos) 
+    
+    def delete(self, request, id):
+        
+        token = request.COOKIES.get('jwt')
+
+        if not token:
+             return JsonResponse({
+                  "message" : "Usuario Inautenticado"
+             })
+        categorias = list (Categoria.objects.filter(id=id).values())
+        if(len(categorias) > 0):
+                Categoria.objects.filter(id=id).delete()
+                datos = {'message' : 'Successfully'}
+        else:
+                datos = {'message' : 'Categorias no existentes'}     
+        return JsonResponse(datos)  

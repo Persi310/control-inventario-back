@@ -35,15 +35,22 @@ class VistaInventario(View):
                 datos = {'message' : 'Inventario sin stock'}
             return JsonResponse(datos) 
     def post(self, request):
-            jd = json.loads(request.body)
-            Inventario.objects.create(
+        token = request.COOKIES.get('jwt')
+
+        if not token:
+             return JsonResponse({
+                  "message" : "Usuario Inautenticado"
+             })
+             
+        jd = json.loads(request.body)
+        Inventario.objects.create(
               cantidad_stock = jd['cantidad_stock'],
               fecha_ultima_actualizacion = jd['fecha_ultima_actualizacion'],
               producto_id = jd['producto_id'],
               tienda_id = jd['tienda_id'],
             )
-            datos = {'message' : 'Successfully'}
-            return JsonResponse(datos) 
+        datos = {'message' : 'Successfully'}
+        return JsonResponse(datos) 
     def put(self, id):
             datos = {'message' : 'Successfully'}
             return JsonResponse(datos) 

@@ -35,13 +35,19 @@ class VistaTiendas(View):
                 datos = {'message' : 'Tienda no existente'}
             return JsonResponse(datos) 
     def post(self, request):
-            jd = json.loads(request.body)
-            Tienda.objects.create(
+        token = request.COOKIES.get('jwt')
+
+        if not token:
+             return JsonResponse({
+                  "message" : "Usuario Inautenticado"
+             })
+        jd = json.loads(request.body)
+        Tienda.objects.create(
               tienda = jd['tienda'],
               direccion = jd['direccion'],
             )
-            datos = {'message' : 'Successfully'}
-            return JsonResponse(datos) 
+        datos = {'message' : 'Successfully'}
+        return JsonResponse(datos) 
     def put(self, id):
             datos = {'message' : 'Successfully'}
             return JsonResponse(datos) 

@@ -35,6 +35,14 @@ class VistaCompras(View):
                 datos = {'message' : 'Compras no existentes'}
             return JsonResponse(datos) 
     def post(self, request):
+        
+        token = request.COOKIES.get('jwt')
+
+        if not token:
+             return JsonResponse({
+                  "message" : "Usuario Inautenticado"
+             })
+             
         jd = json.loads(request.body)
         total = 0
         compra = Compra.objects.create(

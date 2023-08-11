@@ -35,8 +35,16 @@ class VistaProductos(View):
                 datos = {'message' : 'Usuarios no existentes'}
             return JsonResponse(datos) 
     def post(self, request):
-            jd = json.loads(request.body)
-            Producto.objects.create(
+        
+        token = request.COOKIES.get('jwt')
+
+        if not token:
+             return JsonResponse({
+                  "message" : "Usuario Inautenticado"
+             })
+             
+        jd = json.loads(request.body)
+        Producto.objects.create(
               nombre = jd['nombre'],
               descripcion = jd['descripcion'],
               precio = jd['precio'],
@@ -45,8 +53,8 @@ class VistaProductos(View):
               marca_id = jd['marca_id'],
               proveedor_id = jd['proveedor_id'],
             )
-            datos = {'message' : 'Successfully'}
-            return JsonResponse(datos) 
+        datos = {'message' : 'Successfully'}
+        return JsonResponse(datos) 
     def put(self, id):
             datos = {'message' : 'Successfully'}
             return JsonResponse(datos) 
