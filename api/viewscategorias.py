@@ -13,12 +13,12 @@ class VistaCategorias(View):
     
     def get(self, request, id=0):
 
-        token = request.COOKIES.get('jwt')
+        """ token = request.COOKIES.get('jwt')
 
         if not token:
              return JsonResponse({
                   "message" : "Usuario Inautenticado"
-             })
+             }) """
 
         if(id>0):
             categorias = list (Categoria.objects.filter(id=id).values())
