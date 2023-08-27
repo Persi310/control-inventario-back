@@ -14,7 +14,7 @@ from .viewslogin import VistaLogin, VistaLogout
 
 urlpatterns = [
 
-    #RUTAS USERS
+    #RUTAS INICIALES
     path('registro', VistaRegistro.as_view(), name='registro'),
     path('login', VistaLogin.as_view(), name='login'),
     path('logout', VistaLogout.as_view(), name='logout'),
