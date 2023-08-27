@@ -21,16 +21,16 @@ class VistaProductos(View):
              }) """
 
         if(id>0):
-            usuarios = list (Producto.objects.filter(id=id).values())
-            if(len(usuarios) > 0):
-                datos = {'message' : 'Successfully', 'usuarios' : usuarios}
+            productos = list (Producto.objects.filter(id=id).values())
+            if(len(productos) > 0):
+                datos = {'message' : 'Successfully', 'productos' : productos}
             else:
                 datos = {'message' : 'Usuarios no existentes'}
             return JsonResponse(datos)    
         else:
-            usuarios = list (Producto.objects.values())                 
-            if len(usuarios) > 0 : 
-                datos = {'message' : 'Successfully', 'usuarios' : usuarios}
+            productos = list (Producto.objects.values())                 
+            if len(productos) > 0 : 
+                datos = {'message' : 'Successfully', 'productos' : productos}
             else: 
                 datos = {'message' : 'Usuarios no existentes'}
             return JsonResponse(datos) 

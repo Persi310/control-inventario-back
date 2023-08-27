@@ -21,16 +21,16 @@ class VistaTiendas(View):
              }) """
 
         if(id>0):
-            marcas = list (Tienda.objects.filter(id=id).values())
-            if(len(marcas) > 0):
-                datos = {'message' : 'Successfully', 'marcas' : marcas}
+            tiendas = list (Tienda.objects.filter(id=id).values())
+            if(len(tiendas) > 0):
+                datos = {'message' : 'Successfully', 'marcas' : tiendas}
             else:
                 datos = {'message' : 'Tienda no existente'}
             return JsonResponse(datos)    
         else:
-            marcas = list (Tienda.objects.values())                 
-            if len(marcas) > 0 : 
-                datos = {'message' : 'Successfully', 'marcas' : marcas}
+            tiendas = list (Tienda.objects.values())                 
+            if len(tiendas) > 0 : 
+                datos = {'message' : 'Successfully', 'tiendas' : tiendas}
             else: 
                 datos = {'message' : 'Tienda no existente'}
             return JsonResponse(datos) 
