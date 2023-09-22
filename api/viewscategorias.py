@@ -13,12 +13,12 @@ class VistaCategorias(View):
     
     def get(self, request, id=0):
 
-        token = request.COOKIES.get('jwt')
+        """ token = request.COOKIES.get('jwt')
 
         if not token:
              return JsonResponse({
                   "message" : "Usuario Inautenticado"
-             })
+             }) """
 
         if(id>0):
             categorias = list (Categoria.objects.filter(id=id).values())
@@ -36,12 +36,12 @@ class VistaCategorias(View):
             return JsonResponse(datos) 
     def post(self, request):
         
-        token = request.COOKIES.get('jwt')
+        """ token = request.COOKIES.get('jwt')
 
         if not token:
              return JsonResponse({
                   "message" : "Usuario Inautenticado"
-             })
+             }) """
                
         jd = json.loads(request.body)
             
@@ -52,12 +52,12 @@ class VistaCategorias(View):
         return JsonResponse(datos) 
     def put(self, request,  id):
         
-        token = request.COOKIES.get('jwt')
+        """ token = request.COOKIES.get('jwt')
 
         if not token:
              return JsonResponse({
                   "message" : "Usuario Inautenticado"
-             })
+             }) """
         
         jd = json.loads(request.body)
         categorias = list (Categoria.objects.filter(id=id).values())
@@ -72,12 +72,12 @@ class VistaCategorias(View):
     
     def delete(self, request, id):
         
-        token = request.COOKIES.get('jwt')
+        """ token = request.COOKIES.get('jwt')
 
         if not token:
              return JsonResponse({
                   "message" : "Usuario Inautenticado"
-             })
+             }) """
         categorias = list (Categoria.objects.filter(id=id).values())
         if(len(categorias) > 0):
                 Categoria.objects.filter(id=id).delete()

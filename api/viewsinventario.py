@@ -13,12 +13,12 @@ class VistaInventario(View):
     
     def get(self, request, id=0):
 
-        token = request.COOKIES.get('jwt')
+        """ token = request.COOKIES.get('jwt')
 
         if not token:
              return JsonResponse({
                   "message" : "Usuario Inautenticado"
-             })
+             }) """
 
         if(id>0):
             marcas = list (Inventario.objects.filter(id=id).values())
@@ -35,12 +35,12 @@ class VistaInventario(View):
                 datos = {'message' : 'Inventario sin stock'}
             return JsonResponse(datos) 
     def post(self, request):
-        token = request.COOKIES.get('jwt')
+        """ token = request.COOKIES.get('jwt')
 
         if not token:
              return JsonResponse({
                   "message" : "Usuario Inautenticado"
-             })
+             }) """
              
         jd = json.loads(request.body)
         Inventario.objects.create(

@@ -28,20 +28,20 @@ class VistaProductos(View):
                 datos = {'message' : 'Usuarios no existentes'}
             return JsonResponse(datos)    
         else:
-            productos = list (Producto.objects.values())                 
+            productos = list (Producto.objects.select_related('categoria', 'marca', 'proveedor').values('id', 'nombre', 'descripcion', 'precio', 'cantidad_minima', 'categoria__categoria', 'marca__marca', 'proveedor__first_name'))                 
             if len(productos) > 0 : 
-                datos = {'message' : 'Successfully', 'productos' : productos}
+                datos = {'message' : 'Successfully', 'productos' : list(productos)}
             else: 
                 datos = {'message' : 'Usuarios no existentes'}
             return JsonResponse(datos) 
     def post(self, request):
         
-        token = request.COOKIES.get('jwt')
+        """ token = request.COOKIES.get('jwt')
 
         if not token:
              return JsonResponse({
                   "message" : "Usuario Inautenticado"
-             })
+             }) """
              
         jd = json.loads(request.body)
         Producto.objects.create(
