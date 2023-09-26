@@ -36,17 +36,19 @@ class VistaUsers(View):
     def post(self, request):
             jd = json.loads(request.body)
             Users.objects.create(
-              nombre_usuario = jd['nombre_usuario'],
-              correo_electronico = jd['correo_electronico'],
+              is_superuser = jd['is_superuser'],
+              username = jd['username'],
+              first_name = jd['first_name'],
+              last_name = jd['last_name'],
+              is_staff = jd['is_staff'],
+              is_active = jd['is_active'],
+              date_joined = jd['date_joined'],
+              email = jd['email'],
               password = jd['password'],
-              primer_nombre = jd['primer_nombre'],
-              segundo_nombre = jd['segundo_nombre'],
-              primer_apellido = jd['primer_apellido'],
-              segundo_apellido = jd['segundo_apellido'],
               direccion = jd['direccion'],
               telefono = jd['telefono'],
               nombre_empresa = jd['nombre_empresa'],
-              rol_id = jd['rol_id'],
+              rol_id = 1,
             )
             datos = {'message' : 'Successfully'}
             return JsonResponse(datos) 
