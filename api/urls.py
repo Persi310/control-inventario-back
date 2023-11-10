@@ -10,6 +10,8 @@ from .viewstiendas import VistaTiendas
 from .viewsventas import VistaVentas
 from .viewsregistro import VistaRegistro
 from .viewslogin import VistaLogin, VistaLogout
+from .viewsdetallecompra import VistaDetalleCompras
+from .viewsdetalleventas import VistaDetalleVentas
 
 
 urlpatterns = [
@@ -42,10 +44,12 @@ urlpatterns = [
     #RUTAS COMPRAS
     path('compras', VistaCompras.as_view(), name='lista_compras'),
     path('compras/<int:id>', VistaCompras.as_view(), name='procesos_compras'),
+    path('productos_compra/<int:compra_id>', VistaDetalleCompras.as_view(), name='productos_compra'),
 
     #RUTAS Inventario
     path('inventario', VistaInventario.as_view(), name='lista_inventario'),
     path('inventario/<int:id>', VistaInventario.as_view(), name='procesos_inventario'),
+    path('productos_stock/top5', VistaInventario.as_view(), name='productos_stock'),
 
     #RUTAS Tiendas
     path('tiendas', VistaTiendas.as_view(), name='lista_tiendas'),
@@ -54,4 +58,6 @@ urlpatterns = [
     #RUTAS Ventas
     path('ventas', VistaVentas.as_view(), name='lista_ventas'),
     path('ventas/<int:id>', VistaVentas.as_view(), name='procesos_ventas'),
+    path('productos_vendidos/top5', VistaVentas.as_view(), name='top_5_productos_vendidos'),
+    path('productos_venta/<int:venta_id>', VistaDetalleVentas.as_view(), name='productos_venta'),
 ]
