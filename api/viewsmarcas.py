@@ -48,11 +48,24 @@ class VistaMarcas(View):
             )
         datos = {'message' : 'Successfully'}
         return JsonResponse(datos) 
-    def put(self, id):
-            datos = {'message' : 'Successfully'}
+    def put(self, request, id):
+        try:
+            marca = Marca.objects.get(id=id)
+            data = json.loads(request.body)
+            marca.marca = data.get('marca', marca.marca)
+            marca.save()
+            datos = {'message': 'Marca actualizada correctamente'}
             return JsonResponse(datos) 
-    def delete(self, id):
-            jd = json.loads(id)
-            Marca.objects.delete(jd)
-            datos = {'message' : 'Successfully'}
+        except Marca.DoesNotExist:
+            datos = {'message': 'Error'}
             return JsonResponse(datos) 
+    def delete(self, request, id):
+        marca_id = int(id)  # Convierte el ID a un entero (si es un string)
+        try:
+            marca = Marca.objects.get(id=marca_id)
+            marca.delete()
+            datos = {'message': 'Marca eliminada exitosamente'}
+            return JsonResponse(datos)
+        except Marca.DoesNotExist:
+            datos = {'message': 'La marca no existe'}
+            return JsonResponse(datos)

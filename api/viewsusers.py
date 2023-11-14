@@ -52,11 +52,37 @@ class VistaUsers(View):
             )
             datos = {'message' : 'Successfully'}
             return JsonResponse(datos) 
-    def put(self, id):
-            datos = {'message' : 'Successfully'}
-            return JsonResponse(datos) 
-    def delete(self, id):
-            jd = json.loads(id)
-            Users.objects.delete(jd)
-            datos = {'message' : 'Successfully'}
-            return JsonResponse(datos) 
+    def put(self, request, id):
+        try:
+            user = Users.objects.get(id=id)  # Obtén el usuario a actualizar
+            jd = json.loads(request.body)  # Obtén los datos del cuerpo de la solicitud
+            user.is_superuser = jd.get('is_superuser', user.is_superuser)
+            user.username = jd.get('username', user.username)
+            user.first_name = jd.get('first_name', user.first_name)
+            user.last_name = jd.get('last_name', user.last_name)
+            user.is_staff = jd.get('is_staff', user.is_staff)
+            user.is_active = jd.get('is_active', user.is_active)
+            user.date_joined = jd.get('date_joined', user.date_joined)
+            user.email = jd.get('email', user.email)
+            user.password = jd.get('password', user.password)
+            user.direccion = jd.get('direccion', user.direccion)
+            user.telefono = jd.get('telefono', user.telefono)
+            user.nombre_empresa = jd.get('nombre_empresa', user.nombre_empresa)
+
+            user.save()  # Guarda los cambios
+
+            datos = {'message': 'Usuario actualizado correctamente'}
+            return JsonResponse(datos)
+        except Users.DoesNotExist:
+            datos = {'message': 'El usuario no existe'}
+            return JsonResponse(datos)
+    def delete(self, request, id):
+        marca_id = int(id)  # Convierte el ID a un entero (si es un string)
+        try:
+            marca = Users.objects.get(id=marca_id)
+            marca.delete()
+            datos = {'message': 'Marca eliminada exitosamente'}
+            return JsonResponse(datos)
+        except Users.DoesNotExist:
+            datos = {'message': 'La marca no existe'}
+            return JsonResponse(datos)

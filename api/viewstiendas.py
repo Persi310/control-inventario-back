@@ -48,11 +48,26 @@ class VistaTiendas(View):
             )
         datos = {'message' : 'Successfully'}
         return JsonResponse(datos) 
-    def put(self, id):
-            datos = {'message' : 'Successfully'}
+    def put(self, request, id):
+        try:
+            print(request.body)
+            tienda = Tienda.objects.get(id=id)
+            data = json.loads(request.body)
+            tienda.tienda = data.get('tienda', tienda.tienda)
+            tienda.direccion = data.get('direccion', tienda.direccion)
+            tienda.save()
+            datos = {'message': 'Tienda actualizada correctamente'}
             return JsonResponse(datos) 
-    def delete(self, id):
-            jd = json.loads(id)
-            Tienda.objects.delete(jd)
-            datos = {'message' : 'Successfully'}
+        except Tienda.DoesNotExist:
+            datos = {'message': 'Error'}
             return JsonResponse(datos) 
+    def delete(self, request, id):
+        marca_id = int(id)  # Convierte el ID a un entero (si es un string)
+        try:
+            marca = Tienda.objects.get(id=marca_id)
+            marca.delete()
+            datos = {'message': 'Marca eliminada exitosamente'}
+            return JsonResponse(datos)
+        except Tienda.DoesNotExist:
+            datos = {'message': 'La marca no existe'}
+            return JsonResponse(datos)  

@@ -19,21 +19,24 @@ class VistaInventario(View):
              return JsonResponse({
                   "message" : "Usuario Inautenticado"
              }) """
-
-        if(id>0):
-            marcas = list (Inventario.objects.filter(id=id).values())
-            if(len(marcas) > 0):
-                datos = {'message' : 'Successfully', 'marcas' : marcas}
-            else:
-                datos = {'message' : 'Inventario sin stock'}
-            return JsonResponse(datos)    
+        if request.path.endswith('/top5'):
+            return self.obtener_productos_poco_stock(request)
         else:
-            marcas = list (Inventario.objects.values())                 
-            if len(marcas) > 0 : 
-                datos = {'message' : 'Successfully', 'marcas' : marcas}
-            else: 
-                datos = {'message' : 'Inventario sin stock'}
-            return JsonResponse(datos) 
+            if(id>0):
+                marcas = list (Inventario.objects.filter(id=id).values())
+                if(len(marcas) > 0):
+                    datos = {'message' : 'Successfully', 'inventario' : marcas}
+                else:
+                    datos = {'message' : 'Inventario sin stock'}
+                return JsonResponse(datos)    
+            else:
+                marcas = list (Inventario.objects.select_related('producto', 'tienda').values('id', 'cantidad_stock', 'fecha_ultima_actualizacion', 'producto__nombre', 'tienda__tienda'))                 
+                if len(marcas) > 0 : 
+                    datos = {'message' : 'Successfully', 'inventario' : marcas}
+                else: 
+                    datos = {'message' : 'Inventario sin stock'}
+                return JsonResponse(datos) 
+    pass
     def post(self, request):
         """ token = request.COOKIES.get('jwt')
 
@@ -51,11 +54,19 @@ class VistaInventario(View):
             )
         datos = {'message' : 'Successfully'}
         return JsonResponse(datos) 
-    def put(self, id):
-            datos = {'message' : 'Successfully'}
-            return JsonResponse(datos) 
-    def delete(self, id):
-            jd = json.loads(id)
-            Inventario.objects.delete(jd)
-            datos = {'message' : 'Successfully'}
-            return JsonResponse(datos) 
+    
+    def obtener_productos_poco_stock(self, request):
+        try:
+            productos_poco_stock = Inventario.objects.filter(cantidad_stock__lt=100).values('producto__nombre', 'cantidad_stock', 'fecha_ultima_actualizacion', 'tienda__tienda')
+            top_products_list = list(productos_poco_stock)
+            response_data = {
+                'message': 'Top 5 productos con menor stock',
+                'top_products': top_products_list
+            }
+            return JsonResponse(response_data)
+        except Exception as e:
+            response_data = {
+                'message': 'Error al obtener los 5 productos: {}'.format(str(e))
+            }
+            return JsonResponse(response_data, status=500)
+    

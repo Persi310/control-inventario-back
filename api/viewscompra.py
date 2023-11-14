@@ -1,9 +1,11 @@
 from django.views import View
-from .models import Compra, DetalleCompras
+from .models import Compra, DetalleCompras, Inventario
 from django.http.response import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 import json
+from datetime import datetime
+from django.db import transaction
 
 class VistaCompras(View):
     
@@ -19,59 +21,89 @@ class VistaCompras(View):
              return JsonResponse({
                   "message" : "Usuario Inautenticado"
              }) """
-
         if(id>0):
-            compras = list (Compra.objects.filter(id=id).values())
-            if(len(compras) > 0):
-                datos = {'message' : 'Successfully', 'compras' : compras}
-            else:
-                datos = {'message' : 'Compras no existentes'}
-            return JsonResponse(datos)    
+                compras = list (Compra.objects.filter(id=id).values())
+                if(len(compras) > 0):
+                    datos = {'message' : 'Successfully', 'compras' : compras}
+                else:
+                    datos = {'message' : 'Compras no existentes'}
+                return JsonResponse(datos)    
         else:
-            compras = list (Compra.objects.values())                 
-            if len(compras) > 0 : 
-                datos = {'message' : 'Successfully', 'categorias' : compras}
-            else: 
-                datos = {'message' : 'Compras no existentes'}
-            return JsonResponse(datos) 
+                compras = list (Compra.objects.select_related('usuario').values('id', 'fecha', 'total', 'usuario__first_name'))                 
+                if len(compras) > 0 : 
+                    datos = {'message' : 'Successfully', 'compras' : compras}
+                else: 
+                    datos = {'message' : 'Compras no existentes'}
+                return JsonResponse(datos) 
     def post(self, request):
-        """ 
-        token = request.COOKIES.get('jwt')
+        try:
+            data = json.loads(request.body)
+            compra_data = data.get('compra', {})
+            fecha = compra_data.get('fecha', '')
+            usuario_id = compra_data.get('usuario_id', '')
+            productos = compra_data.get('productos', [])
 
-        if not token:
-             return JsonResponse({
-                  "message" : "Usuario Inautenticado"
-             }) """
-             
-        jd = json.loads(request.body)
-        total = 0
-        compra = Compra.objects.create(
-            fecha=jd['fecha'],
-            total=0,
-            usuario_id=jd['usuario_id'],
-        )
-        productos = jd.get('productos', [])
-        for producto in productos:
-            subtotal = producto['cantidad'] * producto['precio_unitario']
-            DetalleCompras.objects.create(
-                compra=compra,
-                producto_id=producto['producto_id'],
-                cantidad=producto['cantidad'],
-                subtotal=subtotal,
-                precio_unitario=producto['precio_unitario'],
-            )
-            total += subtotal
+            nueva_compra = Compra.objects.create(fecha=fecha, usuario_id=usuario_id, total=0)
 
-        compra.total = total
-        compra.save()
+            total_compra = 0
 
-        datos = {'message': 'Successfully'}
-        return JsonResponse(datos) 
-    def put(self, id):
-            datos = {'message' : 'Successfully'}
-            return JsonResponse(datos) 
-    def delete(self, id):
-            jd = json.loads(id)
-            Compra.objects.delete(jd)
-            datos = {'message' : 'Successfully'}
-            return JsonResponse(datos) 
+            for producto_data in productos:
+                producto_id = producto_data.get('producto_id')
+                cantidad = producto_data.get('cantidad')
+                precio = producto_data.get('precio')
+
+                DetalleCompras.objects.create(
+                    compra=nueva_compra,
+                    producto_id=producto_id,
+                    cantidad=cantidad,
+                    subtotal=cantidad * precio,
+                    precio_unitario=precio
+                )
+
+                fecha_actual = datetime.now()
+
+                # Buscar el producto en Inventario o crearlo si no existe
+                producto, creado = Inventario.objects.get_or_create(id=producto_id, defaults={
+                    'cantidad_stock': cantidad,
+                    'producto_id': producto_id,
+                    'fecha_ultima_actualizacion': fecha_actual,
+                    'tienda_id': 1
+                })
+
+                # Actualizar la cantidad del producto si no se creó uno nuevo
+                if not creado:
+                    producto.cantidad_stock += cantidad
+                    producto.fecha_ultima_actualizacion = fecha_actual
+                    producto.tienda_id = 1
+                    producto.save()
+
+                subtotal = cantidad * precio
+                total_compra += subtotal
+
+            nueva_compra.total = total_compra
+            nueva_compra.save()
+
+            response_data = {
+                'message': 'Compra creada exitosamente.'
+            }
+        except Exception as e:
+            response_data = {
+                'message': 'Error en el servidor al procesar los datos: {}'.format(str(e))
+            }
+        return JsonResponse(response_data)
+
+    def obtener_productos(self, request, compra_id):
+        detalles = DetalleCompras.objects.filter(compra_id=compra_id).values('producto_id', 'cantidad', 'precio_unitario')
+        
+        detalles_list = list(detalles)
+        if detalles_list:
+            response_data = {
+                'message': 'Detalles de la compra obtenidos exitosamente.',
+                'detalles_compra': detalles_list
+            }
+        else:
+            response_data = {
+                'message': 'No se encontraron detalles para la compra especificada.'
+            }
+
+        return JsonResponse(response_data)

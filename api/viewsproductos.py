@@ -55,11 +55,29 @@ class VistaProductos(View):
             )
         datos = {'message' : 'Successfully'}
         return JsonResponse(datos) 
-    def put(self, id):
-            datos = {'message' : 'Successfully'}
+    def put(self, request, id):
+        try:
+            print(request.body)  
+            producto = Producto.objects.get(id=id)
+            data = json.loads(request.body)
+            print(data)  
+            producto.nombre = data.get('nombre', producto.nombre)
+            producto.descripcion = data.get('descripcion', producto.descripcion)
+            producto.precio = data.get('precio', producto.precio)
+            producto.cantidad_minima = data.get('cantidad_minima', producto.cantidad_minima)
+            producto.save()
+            datos = {'message': 'Producto actualizado correctamente'}
             return JsonResponse(datos) 
-    def delete(self, id):
-            jd = json.loads(id)
-            Producto.objects.delete(jd)
-            datos = {'message' : 'Successfully'}
+        except Producto.DoesNotExist:
+            datos = {'message': 'Error'}
+            return JsonResponse(datos) 
+    def delete(self, request, id):
+        marca_id = int(id)  # Convierte el ID a un entero (si es un string)
+        try:
+            marca = Producto.objects.get(id=marca_id)
+            marca.delete()
+            datos = {'message': 'Marca eliminada exitosamente'}
+            return JsonResponse(datos)
+        except Producto.DoesNotExist:
+            datos = {'message': 'La marca no existe'}
             return JsonResponse(datos) 
